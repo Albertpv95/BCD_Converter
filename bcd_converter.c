@@ -145,6 +145,7 @@ void print_bcd(BCD bcd) {
 
 			str[i] = bcd.number[i] + '0'; // itoa
 		}
+		str[i] = '\0';
 		
 		printf("%s\n", str);
 		free(str);
@@ -171,6 +172,7 @@ char* bcd_to_string(BCD bcd) {
 
 			str[i] = bcd.number[i] + '0'; // itoa
 		}
+		str[i] = '\0';
 	}
 
 	return str;
