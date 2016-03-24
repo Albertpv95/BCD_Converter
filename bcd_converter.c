@@ -24,8 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DIMENSION(x) (sizeof(x) / sizeof((x)[0]))
-
 #define BITS 	4	// the number of bits of each digit (0-9) in binary 
 
 /* A matrix or "conversion table" from decimal to binary
