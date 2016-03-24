@@ -9,8 +9,14 @@
 
 #define DIMENSION(x) (sizeof(x) / sizeof((x)[0]))
 
-/*A matrix or "conversion table" from decimal to binary */
-const int dec_to_binary[10][4] = {	// 10 --> we convert digits from 0 to 9   | 4 --> this digits are represented with 4 bits
+#define BITS 	4	// the number of bits of each digit (0-9) in binary 
+
+/* A matrix or "conversion table" from decimal to binary
+*
+*  10 rows 	 --> we convert digits from 0 to 9
+*  4 columns --> this digits are represented with 4 bits
+*/
+const int dec_to_binary[10][4] = {	// 10 --> we convert digits from 0 to 9 | 4 --> this digits are represented with 4 bits
 
 	{0, 0, 0, 0},	// 0
 	{0, 0, 0, 1},	// 1
@@ -65,6 +71,7 @@ int calculate_length(int number) {
 *	
 *	@return : a BCD type containing the number converted and the size of it
 */
+// Pre: the number must be >= 0
 BCD decimal_to_BCD(int number) {
 	int length, i, j, bit;				// the digits of the number to convert, each digit equals 4 bits
 	int *digits = NULL;					//  each digit of the number to convert
@@ -72,36 +79,33 @@ BCD decimal_to_BCD(int number) {
 	BCD bcd;							// the bcd type to return
 
 	length = calculate_length(number);	
-	bcd.size = (size_t) length * 4;		// each number equals 4 bits, so the bcd size will be the digits of the number * 4
+	bcd.size = (size_t) length * BITS;		// each number equals 4 bits, so the bcd size will be the digits of the number * 4
 
-	bcd.number = (int*) malloc(sizeof(int)*(length*4));
+	bcd.number = (int*) malloc(sizeof(int)*(length*BITS));
 	digits = (int*) malloc(sizeof(int)*length);
 
 	if(bcd.number != NULL && digits != NULL) {
-	
+
 		for(i = length - 1; i >= 0; i--) {		// we start from the end to get the digits in order
 			
 			digits[i] = number % 10;
 			number /= 10;
 		}
-
 		number = 0;						// reuse of number, but know as a counter (4 by 4) 
 
 		for(i = 0; i < length; i++) {	// for each digit, we assign the binary conversion of a value between 0 and 9 to the bcd
 
 			bit = 0;
 			
-			for(j = 0; j < 4; j++) { 	// we have the data in a matrix so we need to go over the 4 values
+			for(j = 0; j < BITS; j++) { 	// we have the data in a matrix so we need to go over the 4 values
 
 				bcd.number[number + j] = dec_to_binary[digits[i]][bit];
 				bit++;
 			}
-
-			number += 4;
-		}
+			number += BITS;
+		}	
+		free(digits);
 	}
-
-	free(digits);
 
 	return bcd;
 }
@@ -124,11 +128,10 @@ void print_bcd(BCD bcd) {
 
 			str[i] = bcd.number[i] + '0'; // itoa
 		}
+		
+		printf("%s\n", str);
+		free(str);
 	}
-
-	printf("%s\n", str);
-
-	free(str);
 }
 
 /*
@@ -155,6 +158,7 @@ char* bcd_to_string(BCD bcd) {
 
 	return str;
 }
+
 
 int get_multiple_of_two(int m) {
 	int i, value = 1;
@@ -192,6 +196,7 @@ int bcd_to_decimal(BCD bcd) {
 }
 
 
+// Example
 int main(void) {
 
 	int number = 0;
@@ -213,5 +218,4 @@ int main(void) {
 	} while(number >= 0);
 
 	return 0;
-
 }
